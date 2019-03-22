@@ -1,6 +1,13 @@
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, latitude, and longitude.
 
+class City():
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
+  def __repr__(self):
+    return f'City: {self.name}, {self.lat}, {self.lon}'
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -16,12 +23,17 @@
 # should not be loaded into a City object.
 cities = []
 
+import csv
+
 def cityreader(cities=[]):
-  # TODO Implement the functionality to read from the 'cities.csv' file
-  # For each city record, create a new City instance and add it to the 
-  # `cities` list
-    
-    return cities
+
+  with open('cities.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile)
+    next(reader)  # skips header line
+    for row in reader:
+      cities.append(City(row[0], float(row[3]), float(row[4])))
+
+  return cities
 
 cityreader(cities)
 
@@ -67,5 +79,27 @@ def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
+  minLat = min(lat1, lat2)
+  maxLat = max(lat1, lat2)
+
+  minLon = min(lon1, lon2)
+  maxLon = max(lon1, lon2)
+
+  for city in cities:
+    if float(city.lat) >= minLat and float(city.lat) <= maxLat and float(city.lon) >= minLon and float(city.lon) <= maxLon:
+      within.append(city)
 
   return within
+
+
+userinput1 = input('>> Enter lat1, lon1: ')
+userinput2 = input('>> Enter lat2, lon2: ')
+
+info1 = userinput1.split(',')
+info2 = userinput2.split(',')
+
+results = cityreader_stretch(int(float(info1[0])), int(float(info1[1])), int(float(info2[0])), int(float(info2[1])), cities)
+
+print("Results:")
+for result in results:
+  print(f'{result.name}: ({result.lat},{result.lon})')
